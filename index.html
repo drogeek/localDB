@@ -4,13 +4,14 @@
 <head>
 	<title>LocalStorage</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script> 
+    <meta charset="UTF-8">
 </head>
 <script>
 	$(document).ready(function(){
 		var lstorage = window.localStorage;
 		var sstorage = window.sessionStorage;
 
-		//Deux différentes syntaxes pour l'utilisation de l'objet localStorage
+		//Trois différentes syntaxes pour l'utilisation de l'objet localStorage
 		//syntax 1: on accède à la valeur correspondant à la clef, comme si on accèdait à un attribut d'un objet
 		lstorage.maclef1 = "ma valeur 1";
 		$("#syntax1").html("<p>"+lstorage.maclef1+"</p>");
@@ -25,6 +26,7 @@
 
 
 
+		//Local storage
 		if(lstorage.localstorage == null)
 		{
 			$("<form><input id='localtext' type='text'/><input id='localsubmit' type='button' value='valider'/></form>").appendTo("#local");
@@ -34,7 +36,6 @@
 					lstorage.localstorage = val;
 			});
 		}
-
 		else
 		{
 			$("<p>"+lstorage.localstorage+"</p><button id='localrm'>Supprimer</button>").appendTo("#local");
@@ -42,7 +43,10 @@
 				lstorage.removeItem("localstorage");
 			});
 		}
+		
 
+
+		//Session storage
 		if(sstorage.sessionstorage == null)
 		{
 			$("<form><input id='sessiontext' type='text'/><input id='sessionsubmit' type='button' value='valider'/></form>").appendTo("#session");
@@ -52,7 +56,6 @@
 					sstorage.sessionstorage = val;
 			});
 		}
-
 		else
 		{
 			$("<p>"+sstorage.sessionstorage+"</p><button id='sessionrm'>Supprimer</button>").appendTo("#session");
@@ -61,15 +64,41 @@
 			});
 		}
 
-		var personne = { 
-			prenom : "Jonathan",
-			nom : "GUIENNET",
-			universite : "Toulon"
-		}
 
-		lstorage.personne = JSON.stringify(personne);
-		var personneRecup = JSON.parse(lstorage.personne); 
-		alert(personneRecup.prenom);
+
+		//Object storage
+		if(lstorage.personnes == null)
+		{
+			var personne0 = { 
+				prenom : "Jonathan",
+				nom : "GUIENNET",
+				universite : "Toulon"
+			};
+			var personne1 = { 
+				prenom : "Maxime",
+				nom : "BERNARD",
+				universite : "Toulon"
+			};
+			var personne2 = { 
+				prenom : "Peter",
+				nom : "CAUTY",
+				universite : "Toulon"
+			};
+			var personnes = new Array();
+			personnes.push(personne0, personne1, personne2);
+			lstorage.personnes = JSON.stringify(personnes);
+		}
+		var personnes = JSON.parse(lstorage.personnes);
+		for(i = 0 ; i < personnes.length ; ++i)
+		{
+			$('<option value="' + i + '">' + personnes[i].prenom + '</option>').appendTo($('#selectPersonne'));
+		}
+		$('#selectPersonne').on('change', function() {
+			var i = $('#selectPersonne').val();
+			$('#prenomOut').html(personnes[i].prenom);
+			$('#nomOut').html(personnes[i].nom);
+			$('#universiteOut').html(personnes[i].universite);
+		});
 
 	});
 </script>
@@ -83,6 +112,37 @@
 </div>
 <div id="session">
 	<h1>SessionStorage</h1>
+</div>
+<div id="object">
+	<h1>ObjectStorage</h1>
+	<form>
+		<table>
+			<tr>
+				<th><label for="prenomIn">Prénom</label></th>
+				<td><input type="text" name="prenomIn" id="prenomIn" /></td>
+				<td><p id="prenomOut"></p></td>
+			</tr>
+			<tr>
+				<th><label for="nomIn">Nom</label></th>
+				<td><input type="text" name="nomIn" id="nomIn" /></td>
+				<td><p id="nomOut"></p></td>
+			</tr>
+			<tr>
+				<th><label for="universiteIn">Université</label></th>
+				<td><input type="text" name="universiteIn" id="universiteIn" /></td>
+				<td><p id="universiteOut"></p></td>
+			</tr>
+			<tr>
+				<td colspan="2"><input name="addObject" id="addObject" type="button" value="Ajouter"/></td>
+				<td>
+					<select id="selectPersonne">
+						<!--option value="value">texte</option-->
+					</select>
+					<input name="rmObject" id="rmObject" type="button" value="Supprimer"/>
+				</td>
+			</tr>
+		</table>
+	</form>
 </div>
 </body>
 </html>
