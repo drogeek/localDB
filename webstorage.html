@@ -4,6 +4,16 @@
 <head>
 	<title>LocalStorage</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script> 
+	<!-- Latest compiled and minified JavaScript -->
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+	<!-- Latest compiled and minified CSS -->
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.1/css/bootstrap-select.min.css">
+	<!-- Latest compiled and minified JavaScript -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.1/js/bootstrap-select.min.js"></script>
+
+	<link href="css/bootstrap.min.css" rel="stylesheet">
+	<link href="css/bootstrap-theme.min.css" rel="stylesheet">
+	<link href="css/common.css" rel="stylesheet">
     <meta charset="UTF-8">
 </head>
 <script>
@@ -29,7 +39,7 @@
 		//Local storage
 		if(lstorage.localstorage == null)
 		{
-			$("<form><input id='localtext' type='text'/><input id='localsubmit' type='button' value='valider'/></form>").appendTo("#local");
+			$("<form><input id='localtext' type='text'/><input id='localsubmit' type='button' class='btn btn-primary' value='valider'/></form>").appendTo("#local");
 			$("#localsubmit").click(function(){
 				var val=$("#localtext").val();
 				if(val.length > 0)
@@ -38,7 +48,7 @@
 		}
 		else
 		{
-			$("<p>"+lstorage.localstorage+"</p><button id='localrm'>Supprimer</button>").appendTo("#local");
+			$("<p>"+lstorage.localstorage+"</p><button class='btn btn-danger' id='localrm'>Supprimer</button>").appendTo("#local");
 			$("#localrm").click(function(){
 				lstorage.removeItem("localstorage");
 			});
@@ -49,7 +59,7 @@
 		//Session storage
 		if(sstorage.sessionstorage == null)
 		{
-			$("<form><input id='sessiontext' type='text'/><input id='sessionsubmit' type='button' value='valider'/></form>").appendTo("#session");
+			$("<form><input id='sessiontext' type='text'/><input id='sessionsubmit' type='button' class='btn btn-primary' value='valider'/></form>").appendTo("#session");
 			$("#sessionsubmit").click(function(){
 				var val=$("#sessiontext").val();
 				if(val.length > 0)
@@ -58,7 +68,7 @@
 		}
 		else
 		{
-			$("<p>"+sstorage.sessionstorage+"</p><button id='sessionrm'>Supprimer</button>").appendTo("#session");
+			$("<p>"+sstorage.sessionstorage+"</p><button class='btn btn-danger' id='sessionrm'>Supprimer</button>").appendTo("#session");
 			$("#sessionrm").click(function(){
 				sstorage.removeItem("sessionstorage");
 			});
@@ -103,42 +113,42 @@
 	});
 </script>
 
-<body>
+<body class="container theme-showcase" role="main">
 <div id="syntax1"></div>
 <div id="syntax2"></div>
 <div id="syntax3"></div>
-<div id="local">
+<div id="local" class="page-header">
 	<h1>LocalStorage</h1>
 </div>
+<h1>SessionStorage</h1>
 <div id="session">
-	<h1>SessionStorage</h1>
 </div>
+<h1>ObjectStorage</h1>
 <div id="object">
-	<h1>ObjectStorage</h1>
 	<form>
 		<table>
 			<tr>
-				<th><label for="prenomIn">Prénom</label></th>
+				<th><label class="label label-default" for="prenomIn">Prénom</label></th>
 				<td><input type="text" name="prenomIn" id="prenomIn" /></td>
 				<td><p id="prenomOut"></p></td>
 			</tr>
 			<tr>
-				<th><label for="nomIn">Nom</label></th>
+				<th><label class="label label-default" for="nomIn">Nom</label></th>
 				<td><input type="text" name="nomIn" id="nomIn" /></td>
 				<td><p id="nomOut"></p></td>
 			</tr>
 			<tr>
-				<th><label for="universiteIn">Université</label></th>
+				<th><label class="label label-default" for="universiteIn">Université</label></th>
 				<td><input type="text" name="universiteIn" id="universiteIn" /></td>
 				<td><p id="universiteOut"></p></td>
 			</tr>
 			<tr>
-				<td colspan="2"><input name="addObject" id="addObject" type="button" value="Ajouter"/></td>
+				<td colspan="2"><input name="addObject" id="addObject" type="button" class="btn btn-success" value="Ajouter"/></td>
 				<td>
-					<select id="selectPersonne">
+					<select id="selectPersonne" class="selectpicker">
 						<!--option value="value">texte</option-->
 					</select>
-					<input name="rmObject" id="rmObject" type="button" value="Supprimer"/>
+					<input name="rmObject" id="rmObject" type="button" class="btn btn-danger" value="Supprimer"/>
 				</td>
 			</tr>
 		</table>
