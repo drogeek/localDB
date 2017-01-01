@@ -89,6 +89,7 @@
 			lstorage.personnes = JSON.stringify(personnes);
 		}
 		var personnes = JSON.parse(lstorage.personnes);
+		alert(personnes.length);
 		for(i = 0 ; i < personnes.length ; ++i)
 		{
 			$('<option value="' + i + '">' + personnes[i].prenom + '</option>').appendTo($('#selectPersonne'));
@@ -98,6 +99,18 @@
 			$('#prenomOut').html(personnes[i].prenom);
 			$('#nomOut').html(personnes[i].nom);
 			$('#universiteOut').html(personnes[i].universite);
+		});
+		$('#addObject').click(function(){
+			personnes.push({prenom : $('#prenomIn').val(), nom : $('#nomIn').val(), universite : $('#universiteIn').val()});
+			lstorage.personnes = JSON.stringify(personnes);
+		});
+		$('#rmObject').click(function(){
+			for(var i = $('#selectPersonne').val() ; i < personnes.length - 1 ; ++i)
+				personnes[i] = personnes[i + 1];
+			//personnes.pop();
+			personnes[personnes.length - 1] = null;
+			--personnes.length;
+			lstorage.personnes = JSON.stringify(personnes);
 		});
 
 	});
@@ -136,7 +149,6 @@
 				<td colspan="2"><input name="addObject" id="addObject" type="button" value="Ajouter"/></td>
 				<td>
 					<select id="selectPersonne">
-						<!--option value="value">texte</option-->
 					</select>
 					<input name="rmObject" id="rmObject" type="button" value="Supprimer"/>
 				</td>
