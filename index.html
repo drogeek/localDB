@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+	<title>LocalStorage</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script> 
+</head>
+<script>
+	$(document).ready(function(){
+		var lstorage = window.localStorage;
+		var sstorage = window.sessionStorage;
+
+		//Deux différentes syntaxes pour l'utilisation de l'objet localStorage
+		//syntax 1: on accède à la valeur correspondant à la clef, comme si on accèdait à un attribut d'un objet
+		lstorage.maclef1 = "ma valeur 1";
+		$("#syntax1").html("<p>"+lstorage.maclef1+"</p>");
+
+		//syntax 2: on accède à la valeur comme à un tableau 
+		lstorage['maclef2'] = "ma valeur 2";
+		$("#syntax2").html("<p>"+lstorage["maclef2"]+"</p>");
+		
+		//syntax 3: on accède à la valeur via une fonction d'accès
+		lstorage.setItem("maclef3", "ma valeur 3");
+		$("#syntax3").html("<p>"+lstorage.getItem("maclef3")+"</p>");
+
+
+
+		if(lstorage.localstorage == null)
+		{
+			$("<form><input id='localtext' type='text'/><input id='localsubmit' type='button' value='valider'/></form>").appendTo("#local");
+			$("#localsubmit").click(function(){
+				var val=$("#localtext").val();
+				if(val.length > 0)
+					lstorage.localstorage = val;
+			});
+		}
+
+		else
+		{
+			$("<p>"+lstorage.localstorage+"</p><button id='localrm'>Supprimer</button>").appendTo("#local");
+			$("#localrm").click(function(){
+				lstorage.removeItem("localstorage");
+			});
+		}
+
+		if(sstorage.sessionstorage == null)
+		{
+			$("<form><input id='sessiontext' type='text'/><input id='sessionsubmit' type='button' value='valider'/></form>").appendTo("#session");
+			$("#sessionsubmit").click(function(){
+				var val=$("#sessiontext").val();
+				if(val.length > 0)
+					sstorage.sessionstorage = val;
+			});
+		}
+
+		else
+		{
+			$("<p>"+sstorage.sessionstorage+"</p><button id='sessionrm'>Supprimer</button>").appendTo("#session");
+			$("#sessionrm").click(function(){
+				sstorage.removeItem("sessionstorage");
+			});
+		}
+
+		var personne = { 
+			prenom : "Jonathan",
+			nom : "GUIENNET",
+			universite : "Toulon"
+		}
+
+		lstorage.personne = JSON.stringify(personne);
+		var personneRecup = JSON.parse(lstorage.personne); 
+		alert(personneRecup.prenom);
+
+	});
+</script>
+
+<body>
+<div id="syntax1"></div>
+<div id="syntax2"></div>
+<div id="syntax3"></div>
+<div id="local">
+	<h1>LocalStorage</h1>
+</div>
+<div id="session">
+	<h1>SessionStorage</h1>
+</div>
+</body>
+</html>
