@@ -26,7 +26,7 @@
 			// Ouvre la BDD via une requète
 			var request = window.indexedDB.open("maDBamoiquejai", 4);
 			
-			// Créer/met à jour TRUC BIDULE CHOSE MACHIN CHOUETTE
+			// Créer/met à jour la structure de la BDD
 			request.onupgradeneeded = function(event) { 
 				var db = event.target.result;
 
@@ -53,8 +53,6 @@
 					  personnesObjectStore.add(personnes[i]);
 					}
 				};
-				
-				alert("BDD mise a jour (avec succes ???) !");
 			};
 			
 			// S'il n'a pas été possible d'ouvrir la BDD
@@ -62,14 +60,14 @@
 			  alert("Erreur lors de l'ouverture de la BDD, error code " + event.target.errorCode);
 			};
 			
-			// Si la BDD a été ouverte avec succes (est apellée APRES "onupgradeneeded" si ce dernier est nécéssaire)
+			// Si la BDD a été ouverte avec succes (est appelée APRES "onupgradeneeded" si ce dernier est nécéssaire)
 			request.onsuccess = function(event) {
 				// Les transactions seront à ouvrir depuis l'objet retourné 
 				db = event.target.result;
 				
 				// Fonction utilisée pour mettre à jour la liste de séléction des personnes
 				function updateSelect() {
-					// Vide les enciens éléments
+					// Vide les anciens éléments
 					$('#selectPersonne').html("");
 					
 					// Création d'un "cursor" pour parcourir les éléments de la BDD
@@ -96,7 +94,7 @@
 				// Met la liste de séléction des personnes à jour
 				updateSelect();
 				
-				// Création d'un "handler" pour afficher 
+				// Création d'un "handler" pour afficher la personne séléctionnée
 				$('#selectPersonne').on('change', function() {
 					// Récupération de la "key" de la personne
 					var i = $('#selectPersonne').val();
@@ -130,6 +128,7 @@
 				// Création d'un "handler" pour supprimer une personne dans la BDD
 				$('#rmObject').click(function(){
 					var i = $('#selectPersonne').val();
+					// Supprime la personne de la BDD
 					var request = db.transaction("personnes", "readwrite").objectStore("personnes").delete(parseInt(i));
 					request.onsuccess = function(event) {
 						clearPersonne();

@@ -77,48 +77,66 @@
 
 
 		//Object storage
+		var personnes = [];
+		// Fonction utilisée pour mettre à jour la liste de séléction des personnes
+		function updateSelect() {
+			// Vide les anciens éléments
+			$('#selectPersonne').html("");
+			
+			// Récupère les personnes dans la BDD
+			personnes = JSON.parse(lstorage.personnes);
+			
+			// Ajoute les personnes dans la liste de séléction
+			for(i = 0 ; i < personnes.length ; ++i)
+				$('<option value="' + i + '">' + personnes[i].prenom + '</option>').appendTo($('#selectPersonne'));
+		}
+		
+		// Fonction utilisée pour effacer la personne actuellement affichée
+		function clearPersonne() {
+			// Vide les éléments
+			$('#prenomOut').html("");
+			$('#nomOut').html("");
+			$('#universiteOut').html("");
+		}
+		
+		// Initialise la BDD si elle est vide
 		if(lstorage.personnes == null)
 		{
-			var personne0 = { 
-				prenom : "Jonathan",
-				nom : "GUIENNET",
-				universite : "Toulon"
-			};
-			var personne1 = { 
-				prenom : "Maxime",
-				nom : "BERNARD",
-				universite : "Toulon"
-			};
-			var personne2 = { 
-				prenom : "Peter",
-				nom : "CAUTY",
-				universite : "Toulon"
-			};
-			var personnes = new Array();
-			personnes.push(personne0, personne1, personne2);
+			var personnes = [{prenom : "Jonathan", nom : "GUIENNET", universite : "Toulon"},
+							{prenom : "Maxime", nom : "BERNARD", universite : "Toulon"},
+							{prenom : "Peter", nom : "CAUTY", universite : "Toulon"}];
+			
+			// Ajoute les personnes à la BDD
 			lstorage.personnes = JSON.stringify(personnes);
 		}
-		var personnes = JSON.parse(lstorage.personnes);
-		for(i = 0 ; i < personnes.length ; ++i)
-		{
-			$('<option value="' + i + '">' + personnes[i].prenom + '</option>').appendTo($('#selectPersonne'));
-		}
+		
+		// met à jour la liste de séléction des personnes
+		updateSelect();
+		
+		// Création d'un "handler" pour afficher la personne séléctionnée
 		$('#selectPersonne').on('change', function() {
 			var i = $('#selectPersonne').val();
 			$('#prenomOut').html(personnes[i].prenom);
 			$('#nomOut').html(personnes[i].nom);
 			$('#universiteOut').html(personnes[i].universite);
 		});
+		
+		// Création d'un "handler" pour ajouter une personne dans la BDD
 		$('#addObject').click(function(){
 			personnes.push({prenom : $('#prenomIn').val(), nom : $('#nomIn').val(), universite : $('#universiteIn').val()});
 			lstorage.personnes = JSON.stringify(personnes);
+			updateSelect();
 		});
+		
+		// Création d'un "handler" pour supprimer une personne dans la BDD
 		$('#rmObject').click(function(){
 			for(var i = $('#selectPersonne').val() ; i < personnes.length - 1 ; ++i)
 				personnes[i] = personnes[i + 1];
 			personnes[personnes.length - 1] = null;
 			--personnes.length;
 			lstorage.personnes = JSON.stringify(personnes);
+			updateSelect();
+			clearPersonne();
 		});
 
 	});
@@ -156,7 +174,7 @@
 				<tr>
 					<td colspan="2"><input name="addObject" id="addObject" type="button" class="btn btn-success" value="Ajouter"/></td>
 					<td>
-						<select id="selectPersonne" class="selectpicker"></select>
+						<select id="selectPersonne"></select>
 						<input name="rmObject" id="rmObject" type="button" class="btn btn-danger" value="Supprimer"/>
 					</td>
 				</tr>
