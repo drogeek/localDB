@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Webstorage</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script> 
+	<!-- Latest compiled and minified JavaScript -->
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+	<!-- Latest compiled and minified CSS -->
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.1/css/bootstrap-select.min.css">
+	<!-- Latest compiled and minified JavaScript -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.1/js/bootstrap-select.min.js"></script>
+
+	<link href="css/bootstrap.min.css" rel="stylesheet">
+	<link href="css/bootstrap-theme.min.css" rel="stylesheet">
+	<link href="css/common.css" rel="stylesheet">
+    <meta charset="UTF-8">
+</head>
+
+<script>
+	//NOTE1: il faut recharger la page pour appliquer les changements à la page web (il suffit de marteler F5)
+	//NOTE2: trouvez une façon plus intelligente de faire?
+
+	$(document).ready(function(){
+		var lstorage = /*compléter*/
+		var sstorage = /*compléter*/
+
+		//Trois différentes syntaxes pour l'utilisation de l'objet localStorage
+		//syntax 1: on accède à la valeur correspondant à la clef, comme si on accèdait à un attribut d'un objet
+		/*compléter*/
+		$("#syntax1").html("<p>"+/*compléter*/+"</p>");
+
+		//syntax 2: on accède à la valeur comme à un tableau 
+		/*compléter*/
+		$("#syntax2").html("<p>"+/*compléter*/+"</p>");
+		
+		//syntax 3: on accède à la valeur via une fonction d'accès
+		/*compléter*/
+		$("#syntax3").html("<p>"+/*compléter*/+"</p>");
+
+
+
+		//Local storage
+		if(lstorage.localstorage == null)
+		{
+			$("<form><input id='localtext' type='text'/><input id='localsubmit' type='button' class='btn btn-primary' value='valider'/></form>").appendTo("#local");
+			$("#localsubmit").click(function(){
+				var val=$("#localtext").val();
+				if(val.length > 0)
+					//ici on stocke val dans lstorage avec pour clef "localstorage"
+					/*compléter*/
+			});
+		}
+		else
+		{
+			$("<p>"+lstorage.localstorage+"</p><button class='btn btn-danger' id='localrm'>Supprimer</button>").appendTo("#local");
+			$("#localrm").click(function(){
+				// ici on supprime la valeur correspondant à la clef "localstorage"
+				/*compléter*/
+			});
+		}
+		
+
+
+		//Session storage
+		if(sstorage.sessionstorage == null)
+		{
+			$("<form><input id='sessiontext' type='text'/><input id='sessionsubmit' type='button' class='btn btn-primary' value='valider'/></form>").appendTo("#session");
+			$("#sessionsubmit").click(function(){
+				var val=$("#sessiontext").val();
+				if(val.length > 0)
+					//ici on stocke val dans sstorage avec pour clef "sessionstorage"
+					/*compléter*/
+			});
+		}
+		else
+		{
+			$("<p>"+sstorage.sessionstorage+"</p><button class='btn btn-danger' id='sessionrm'>Supprimer</button>").appendTo("#session");
+			$("#sessionrm").click(function(){
+				// ici on supprime la valeur correspondant à la clef "sessionstorage"
+				/*compléter*/
+			});
+		}
+
+
+
+		//Object storage
+		var personnes = [];
+		// Fonction utilisée pour mettre à jour la liste de séléction des personnes
+		function updateSelect() {
+			// Vide les anciens éléments
+			$('#selectPersonne').html("");
+			
+			// Récupère les personnes dans la BDD (attention, webstorage n'accèpte que les string en valeur! Nous on veut un objet)
+			// un indice… il y a un objet qui commence par J et qui finit par SON qui fait ça très bien :)
+			personnes = /*compléter*/;
+			
+			// Ajoute les personnes dans la liste de séléction
+			for(i = 0 ; i < personnes.length ; ++i)
+				$('<option value="' + i + '">' + personnes[i].prenom + '</option>').appendTo($('#selectPersonne'));
+		}
+		
+		// Fonction utilisée pour effacer la personne actuellement affichée
+		function clearPersonne() {
+			// Vide les éléments
+			$('#prenomOut').html("");
+			$('#nomOut').html("");
+			$('#universiteOut').html("");
+		}
+		
+		// Initialise la BDD si elle est vide
+		if(lstorage.personnes == null)
+		{
+			// vous pouvez vous inscrire dedans si ça vous éclate, ou même… nous supprimer O_O
+			var personnes = [{prenom : "Jonathan", nom : "GUIENNET", universite : "Toulon"},
+							{prenom : "Maxime", nom : "BERNARD", universite : "Toulon"},
+							{prenom : "Peter", nom : "CAUTY", universite : "Toulon"}];
+			
+			// Ajoute le tableau personnes à la BDD 
+			// Cette fois on veut partir d'un objet vers une chaine de caractère
+			/*compléter*/
+		}
+		
+		// met à jour la liste de séléction des personnes
+		updateSelect();
+		
+		// Création d'un "handler" pour afficher la personne séléctionnée
+		$('#selectPersonne').on('change', function() {
+			var i = $('#selectPersonne').val();
+			$('#prenomOut').html(personnes[i].prenom);
+			$('#nomOut').html(personnes[i].nom);
+			$('#universiteOut').html(personnes[i].universite);
+		});
+		
+		// Création d'un "handler" pour ajouter une personne dans la BDD
+		$('#addObject').click(function(){
+			personnes.push({prenom : $('#prenomIn').val(), nom : $('#nomIn').val(), universite : $('#universiteIn').val()});
+			//on met à jour la base de donnée
+			/*compléter*/;
+			updateSelect();
+		});
+		
+		// Création d'un "handler" pour supprimer une personne dans la BDD
+		$('#rmObject').click(function(){
+			for(var i = $('#selectPersonne').val() ; i < personnes.length - 1 ; ++i)
+				personnes[i] = personnes[i + 1];
+			personnes[personnes.length - 1] = null;
+			--personnes.length;
+			//on met à jour la base de donnée
+			/*compléter*/;
+			updateSelect();
+			clearPersonne();
+		});
+
+	});
+</script>
+
+<body class="container theme-showcase" role="main">
+	<div id="syntax">
+		<h1>Syntax for webstorage</h1>
+		<div id="syntax1"></div>
+		<div id="syntax2"></div>
+		<div id="syntax3"></div>
+	</div>
+	<div id="local"></div>
+	<div id="session"></div>
+	<div id="object">
+		<h1>Object with LocalStorage</h1>
+		<form>
+			<table>
+				<tr>
+					<th><label class="label label-default" for="prenomIn">Prénom</label></th>
+					<td><input type="text" name="prenomIn" id="prenomIn" /></td>
+					<td><p id="prenomOut"></p></td>
+				</tr>
+				<tr>
+					<th><label class="label label-default" for="nomIn">Nom</label></th>
+					<td><input type="text" name="nomIn" id="nomIn" /></td>
+					<td><p id="nomOut"></p></td>
+				</tr>
+				<tr>
+					<th><label class="label label-default" for="universiteIn">Université</label></th>
+					<td><input type="text" name="universiteIn" id="universiteIn" /></td>
+					<td><p id="universiteOut"></p></td>
+				</tr>
+				<tr>
+					<td colspan="2"><input name="addObject" id="addObject" type="button" class="btn btn-success" value="Ajouter"/></td>
+					<td>
+						<select id="selectPersonne"></select>
+						<input name="rmObject" id="rmObject" type="button" class="btn btn-danger" value="Supprimer"/>
+					</td>
+				</tr>
+			</table>
+		</form>
+	</div>
+</body>
+</html>
