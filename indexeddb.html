@@ -16,8 +16,7 @@
     <meta charset="UTF-8">
 </head>
 <script>
-	var db;
-	$(function(){
+		$(function(){
 		// Vérifie que le navigateur supporte IndexedDB
 		if(!window.indexedDB)
 			alert("Your browser doesn't support a stable version of IndexedDB !");
@@ -33,7 +32,7 @@
 				// Créer un objectStore pour la BDD
 				var objectStore = db.createObjectStore("personnes", {autoIncrement : true});
 
-				// Ajoute les index à la BDD (permet de faire des recherches sur des "non uniques", tel que les prénoms)
+				// Ajoute les index à la BDD (permet de faire des recherches sur des éléments de l'objet, tel que les prénoms)
 				objectStore.createIndex("prenom", "prenom", { unique: false });
 				objectStore.createIndex("nom", "nom", { unique: false });
 				objectStore.createIndex("universite", "universite", { unique: false });
@@ -63,7 +62,7 @@
 			// Si la BDD a été ouverte avec succes (est appelée APRES "onupgradeneeded" si ce dernier est nécéssaire)
 			request.onsuccess = function(event) {
 				// Les transactions seront à ouvrir depuis l'objet retourné 
-				db = event.target.result;
+				var db = event.target.result;
 				
 				// Fonction utilisée pour mettre à jour la liste de séléction des personnes
 				function updateSelect() {
