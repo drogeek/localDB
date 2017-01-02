@@ -67,17 +67,34 @@
 				// Les transactions seront à ouvrir depuis l'objet retourné 
 				db = event.target.result;
 				
-				// Création d'un "cursor" pour parcourir les éléments de la BDD
-				var objectStore = db.transaction("personnes").objectStore("personnes");
-				objectStore.openCursor().onsuccess = function(event) {
-					var cursor = event.target.result;
-					if(cursor)
-					{
-						// Ajout de chaque élément dans le menu déroulant
-						$('<option value="' + cursor.key + '">' + cursor.value.prenom + '</option>').appendTo($('#selectPersonne'));
-						cursor.continue();
-					}
-				};
+				// Fonction utilisée pour mettre à jour la liste de séléction des personnes
+				function updateSelect() {
+					// Vide les enciens éléments
+					$('#selectPersonne').html("");
+					
+					// Création d'un "cursor" pour parcourir les éléments de la BDD
+					var objectStore = db.transaction("personnes").objectStore("personnes");
+					objectStore.openCursor().onsuccess = function(event) {
+						var cursor = event.target.result;
+						if(cursor)
+						{
+							// Ajout de chaque élément dans le menu déroulant
+							$('<option value="' + cursor.key + '">' + cursor.value.prenom + '</option>').appendTo($('#selectPersonne'));
+							cursor.continue();
+						}
+					};
+				}
+				
+				// Fonction utilisée pour effacer la personne actuellement affichée
+				function clearPersonne() {
+					// Vide les éléments
+					$('#prenomOut').html("");
+					$('#nomOut').html("");
+					$('#universiteOut').html("");
+				}
+				
+				// Met la liste de séléction des personnes à jour
+				updateSelect();
 				
 				// Création d'un "handler" pour afficher 
 				$('#selectPersonne').on('change', function() {
@@ -102,6 +119,9 @@
 					
 					// Créer une transaction pour ecrire dans la BDD et ajoute la personne
 					var request = db.transaction("personnes", "readwrite").objectStore("personnes").add(personne);
+					request.onsuccess = function(event) {
+						updateSelect();
+					};
 					request.onerror = function(event) {
 						alert("Impossible d'ajouter la personne à la BDD");
 					};
@@ -111,6 +131,10 @@
 				$('#rmObject').click(function(){
 					var i = $('#selectPersonne').val();
 					var request = db.transaction("personnes", "readwrite").objectStore("personnes").delete(parseInt(i));
+					request.onsuccess = function(event) {
+						clearPersonne();
+						updateSelect();
+					};
 					request.onerror = function(event) {
 						alert("Impossible de supprimer la personne");
 					};
