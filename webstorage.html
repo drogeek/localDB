@@ -37,42 +37,56 @@
 
 
 		//Local storage
-		if(lstorage.localstorage == null)
-		{
-			$("<form><input id='localtext' type='text'/><input id='localsubmit' type='button' class='btn btn-primary' value='valider'/></form>").appendTo("#local");
-			$("#localsubmit").click(function(){
-				var val=$("#localtext").val();
-				if(val.length > 0)
-					lstorage.localstorage = val;
-			});
+		function updateLocal() {
+			$('#local').html("");
+			if(lstorage.localstorage == null)
+			{
+				$("<h1>LocalStorage</h1><form><input id='localtext' type='text'/><input id='localsubmit' type='button' class='btn btn-primary' value='valider'/></form>").appendTo("#local");
+				$("#localsubmit").click(function(){
+					var val=$("#localtext").val();
+					if(val.length > 0) {
+						lstorage.localstorage = val;
+						updateLocal();
+					}
+				});
+			}
+			else
+			{
+				$("<h1>LocalStorage</h1><p>"+lstorage.localstorage+"</p><button class='btn btn-danger' id='localrm'>Supprimer</button>").appendTo("#local");
+				$("#localrm").click(function(){
+					lstorage.removeItem("localstorage");
+					updateLocal();
+				});
+			}
 		}
-		else
-		{
-			$("<p>"+lstorage.localstorage+"</p><button class='btn btn-danger' id='localrm'>Supprimer</button>").appendTo("#local");
-			$("#localrm").click(function(){
-				lstorage.removeItem("localstorage");
-			});
-		}
-		
+		updateLocal();
+
 
 
 		//Session storage
-		if(sstorage.sessionstorage == null)
-		{
-			$("<form><input id='sessiontext' type='text'/><input id='sessionsubmit' type='button' class='btn btn-primary' value='valider'/></form>").appendTo("#session");
-			$("#sessionsubmit").click(function(){
-				var val=$("#sessiontext").val();
-				if(val.length > 0)
-					sstorage.sessionstorage = val;
-			});
+		function updateSession() {
+			$("#session").html("");
+			if(sstorage.sessionstorage == null)
+			{
+				$("<h1>SessionStorage</h1><form><input id='sessiontext' type='text'/><input id='sessionsubmit' type='button' class='btn btn-primary' value='valider'/></form>").appendTo("#session");
+				$("#sessionsubmit").click(function(){
+					var val=$("#sessiontext").val();
+					if(val.length > 0) {("#session")
+						sstorage.sessionstorage = val;
+						updateSession();
+					}
+				});
+			}
+			else
+			{
+				$("<h1>SessionStorage</h1><p>"+sstorage.sessionstorage+"</p><button class='btn btn-danger' id='sessionrm'>Supprimer</button>").appendTo("#session");
+				$("#sessionrm").click(function(){
+					sstorage.removeItem("sessionstorage");
+					updateSession();
+				});
+			}
 		}
-		else
-		{
-			$("<p>"+sstorage.sessionstorage+"</p><button class='btn btn-danger' id='sessionrm'>Supprimer</button>").appendTo("#session");
-			$("#sessionrm").click(function(){
-				sstorage.removeItem("sessionstorage");
-			});
-		}
+		updateSession();
 
 
 
@@ -143,15 +157,14 @@
 </script>
 
 <body class="container theme-showcase" role="main">
-	<div id="syntax1"></div>
-	<div id="syntax2"></div>
-	<div id="syntax3"></div>
-	<div id="local" class="page-header">
-		<h1>LocalStorage</h1>
+	<div id="syntax">
+		<h1>Syntax for webstorage</h1>
+		<div id="syntax1"></div>
+		<div id="syntax2"></div>
+		<div id="syntax3"></div>
 	</div>
-		<h1>SessionStorage</h1>
-	<div id="session">
-	</div>
+	<div id="local"></div>
+	<div id="session"></div>
 	<div id="object">
 		<h1>Object with LocalStorage</h1>
 		<form>
