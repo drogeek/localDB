@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>IndexedDB</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script> 
+	<!-- Latest compiled and minified JavaScript -->
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+	<!-- Latest compiled and minified CSS -->
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.1/css/bootstrap-select.min.css">
+	<!-- Latest compiled and minified JavaScript -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.1/js/bootstrap-select.min.js"></script>
+	
+	<link href="css/bootstrap.min.css" rel="stylesheet">
+	<link href="css/bootstrap-theme.min.css" rel="stylesheet">
+	<link href="css/common.css" rel="stylesheet">
+    <meta charset="UTF-8">
+</head>
+<script>
+	var db;
+	$(function(){
+		// Vérifie que le navigateur supporte IndexedDB
+		if(!window.indexedDB)
+			alert("Your browser doesn't support a stable version of IndexedDB !");
+		else
+		{
+			// Ouvre la BDD via une requète
+			var request = window.indexedDB.open("maDBamoiquejai", 4);
+			
+			// Créer/met à jour TRUC BIDULE CHOSE MACHIN CHOUETTE
+			request.onupgradeneeded = function(event) { 
+				var db = event.target.result;
+
+				// Créer un objectStore pour la BDD
+				var objectStore = db.createObjectStore("personnes", {autoIncrement : true});
+
+				// Ajoute les index à la BDD (permet de faire des recherches sur des "non uniques", tel que les prénoms)
+				objectStore.createIndex("prenom", "prenom", { unique: false });
+				objectStore.createIndex("nom", "nom", { unique: false });
+				objectStore.createIndex("universite", "universite", { unique: false });
+				
+				// Vérifie que les index soient crées avant d'ajouter des éléments dans la BDD
+				objectStore.transaction.oncomplete = function(event) {
+					// Créer les éléments à inserer dans la BDD
+					var personnes = [{prenom : "Jonathan", nom : "GUIENNET", universite : "Toulon"},
+									{prenom : "Maxime", nom : "BERNARD", universite : "Toulon"},
+									{prenom : "Peter", nom : "CAUTY", universite : "Toulon"}];
+					
+					// Créer une transaction pour ecrire dans la BDD
+					var personnesObjectStore = db.transaction("personnes", "readwrite").objectStore("personnes");
+					
+					// Insert les objets dans la BDD
+					for(var i in personnes) {
+					  personnesObjectStore.add(personnes[i]);
+					}
+				};
+				
+				alert("BDD mise a jour (avec succes ???) !");
+			};
+			
+			// S'il n'a pas été possible d'ouvrir la BDD
+			request.onerror = function(event) {
+			  alert("Erreur lors de l'ouverture de la BDD, error code " + event.target.errorCode);
+			};
+			
+			// Si la BDD a été ouverte avec succes (est apellée APRES "onupgradeneeded" si ce dernier est nécéssaire)
+			request.onsuccess = function(event) {
+				// Les transactions seront à ouvrir depuis l'objet retourné 
+				db = event.target.result;
+				
+				// Création d'un "cursor" pour parcourir les éléments de la BDD
+				var objectStore = db.transaction("personnes").objectStore("personnes");
+				objectStore.openCursor().onsuccess = function(event) {
+					var cursor = event.target.result;
+					if(cursor)
+					{
+						// Ajout de chaque élément dans le menu déroulant
+						$('<option value="' + cursor.key + '">' + cursor.value.prenom + '</option>').appendTo($('#selectPersonne'));
+						cursor.continue();
+					}
+				};
+				
+				// Création d'un "handler" pour afficher 
+				$('#selectPersonne').on('change', function() {
+					// Récupération de la "key" de la personne
+					var i = $('#selectPersonne').val();
+					// Requête pour choisir la personne à afficher
+					var request = db.transaction("personnes").objectStore("personnes").get(parseInt(i));
+					request.onerror = function(event) {
+						alert("Impossible d'obtenir la personne correspondant à la clef " + i);
+					};
+					request.onsuccess = function(event) {
+						$('#prenomOut').html(request.result.prenom);
+						$('#nomOut').html(request.result.nom);
+						$('#universiteOut').html(request.result.universite);
+					};
+				});
+				
+				// Création d'un "handler" pour ajouter une personne dans la BDD
+				$('#addObject').click(function(){
+					// Création de la personne
+					var personne = {prenom : $('#prenomIn').val(), nom : $('#nomIn').val(), universite : $('#universiteIn').val()};
+					
+					// Créer une transaction pour ecrire dans la BDD et ajoute la personne
+					var request = db.transaction("personnes", "readwrite").objectStore("personnes").add(personne);
+					request.onerror = function(event) {
+						alert("Impossible d'ajouter la personne à la BDD");
+					};
+				});
+				
+				// Création d'un "handler" pour supprimer une personne dans la BDD
+				$('#rmObject').click(function(){
+					var i = $('#selectPersonne').val();
+					var request = db.transaction("personnes", "readwrite").objectStore("personnes").delete(parseInt(i));
+					request.onerror = function(event) {
+						alert("Impossible de supprimer la personne");
+					};
+				});
+			};
+		}
+	});
+</script>
+<body>
+	<div id="object">
+		<h1>Object with IndexedDB</h1>
+		<form>
+			<table>
+				<tr>
+					<th><label class="label label-default" for="prenomIn">Prénom</label></th>
+					<td><input type="text" name="prenomIn" id="prenomIn" /></td>
+					<td><p id="prenomOut"></p></td>
+				</tr>
+				<tr>
+					<th><label class="label label-default" for="nomIn">Nom</label></th>
+					<td><input type="text" name="nomIn" id="nomIn" /></td>
+					<td><p id="nomOut"></p></td>
+				</tr>
+				<tr>
+					<th><label class="label label-default" for="universiteIn">Université</label></th>
+					<td><input type="text" name="universiteIn" id="universiteIn" /></td>
+					<td><p id="universiteOut"></p></td>
+				</tr>
+				<tr>
+					<td colspan="2"><input name="addObject" id="addObject" type="button" class="btn btn-success" value="Ajouter"/></td>
+					<td>
+						<select id="selectPersonne"></select>
+						<input name="rmObject" id="rmObject" type="button" class="btn btn-danger" value="Supprimer"/>
+					</td>
+				</tr>
+			</table>
+		</form>
+	</div>
+</body>
